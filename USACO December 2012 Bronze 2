@@ -1,0 +1,112 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;*/
+const ll inf = 1e10;
+const ll ninf = -1 * 1e10;
+const ll MOD = 1e9 + 7;
+
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("scramble.in");
+    ofstream fout ("scramble.out");
+    
+    ll n;
+    cin >> n;
+    
+    string lowest[n + 1];
+    string highest[n + 1];
+    string orig[n + 1];
+    
+    for (ll i = 0; i < n; i++) {
+        string s;
+        cin >> s;
+        
+        orig[i] = s;
+        
+        sort(s.begin(), s.end());
+        
+        lowest[i] = s;
+        
+        
+        sort(s.begin(), s.end(), greater<char>());
+        
+        highest[i] = s;
+    }
+    
+    sort(highest, highest + n);
+    sort(lowest, lowest + n);
+    
+    for (ll i = 0; i < n; i++) {
+        string tsmall = orig[i];
+        string tbig = orig[i];
+        
+        sort(tsmall.begin(), tsmall.end());
+        sort(tbig.begin(), tbig.end(), greater<char>());
+        
+        ll idx1 = lower_bound(highest, highest + n, tsmall) - highest;
+        ll idx2 = lower_bound(lowest, lowest + n, tbig) - lowest;
+        
+        if (tsmall != tbig) {
+            idx2--;
+        }
+        
+        cout << idx1 + 1 << " " << idx2 + 1 << endl;
+    }
+    
+    /*for (ll i = 0; i < n; i++) {
+        cout << highest[i] << " " << lowest[i] << endl;
+    }*/
+    
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);*/
+    
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
