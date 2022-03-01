@@ -1,0 +1,77 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+const ll MAXN = 1e4 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;*/
+const ll inf = 1e10;
+const ll ninf = -1 * 1e10;
+const ll MOD = 1e9 + 7;
+
+ll m, n, k;
+ll f[MAXN];
+bool used[MAXN];
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("cowfind.in");
+    ofstream fout ("cowfind.out");
+    
+    string s;
+    fin >> s;
+    
+    ll a = 0;
+    ll ans = 0;
+    
+    for (ll i = 1; i < s.length(); i++) {
+        if (s[i - 1] == '(' && s[i] == '(') {
+            a++;
+        } else if (s[i - 1] == ')' && s[i] == ')') {
+            ans += a;
+        }
+    }
+
+    fout << ans << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
