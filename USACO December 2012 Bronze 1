@@ -1,0 +1,127 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;*/
+const ll inf = 1e10;
+const ll ninf = -1 * 1e10;
+const ll MOD = 1e9 + 7;
+
+ll elsie[MAXN];
+ll bessie[MAXN];
+
+ll b, e;
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("greetings.in");
+    ofstream fout ("greetings.out");
+    
+    cin >> b >> e;
+    
+    ll curtime = 0;
+    bessie[0] = 0;
+    
+    for (ll i = 0; i < b; i++) {
+        ll a;
+        char c;
+        
+        cin >> a >> c;
+        
+        ll dir = (c == 'L') ? -1 : 1;
+        
+        for (ll k = 1; k <= a; k++) {
+            bessie[curtime + k] = bessie[curtime + k - 1] + dir;
+        }
+        
+        curtime += a;
+    }
+    
+    ll curtime2 = 0;
+    elsie[0] = 0;
+    
+    for (ll i = 0; i < e; i++) {
+        ll a;
+        char c;
+        
+        cin >> a >> c;
+        
+        ll dir = (c == 'L') ? -1 : 1;
+        
+        for (ll k = 1; k <= a; k++) {
+            elsie[curtime2 + k] = elsie[curtime2 + k - 1] + dir;
+        }
+        
+        curtime2 += a;
+    }
+    
+    ll maxi = max(curtime, curtime2);
+    for (ll i = curtime; i <= maxi; i++) {
+        bessie[i] = bessie[curtime];
+    }
+    for (ll i = curtime2; i <= maxi; i++) {
+        elsie[i] = elsie[curtime2];
+    }
+
+    ll ans = 0;
+    
+    //cout << endl;
+    for (ll i = 1; i <= maxi; i++) {
+        //cout << bessie[i] << " " << elsie[i] << endl;
+        if (bessie[i] == elsie[i] && bessie[i - 1] != elsie[i - 1]) {
+            ans++;
+        }
+    }
+    
+    cout << ans << endl;
+    
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);*/
+    
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
