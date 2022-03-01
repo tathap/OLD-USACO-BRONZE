@@ -1,0 +1,160 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+#define cout fout
+#define cin fin
+
+const ll MAXN = 1e4 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;*/
+const ll inf = 1e10;
+const ll ninf = -1 * 1e10;
+const ll MOD = 1e9 + 7;
+
+ll n;
+char grid[6][6];
+char temp[6][6];
+
+ll dr[4] = {0, 1, 0, -1};
+ll dc[4] = {1, 0, -1, 0};
+
+ll goal;
+bool didWork = false;
+
+bool check(vector <char> v) {
+    ll len = v.size();
+    
+    if (len % 2 == 1) {
+        return false;
+    }
+    
+    for (ll i = 0; i < len/2; i++) {
+        if (v[i] != '(') {
+            return false;
+        }
+    }
+    
+    for (ll i = len/2; i < len; i++) {
+        if (v[i] != ')') {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+void dfs(ll row, ll col, vector <char> v, ll count) {
+    if (count == goal) {
+        if (check(v)) {
+            didWork = true;
+            
+            /*for (auto el: v) {
+                cout << el << endl;
+            }*/
+        }
+        
+        return;
+    }
+    
+    for (ll i = 0; i < 4; i++) {
+        ll newrow = row + dr[i];
+        ll newcol = col + dc[i];
+        
+        if (newrow >= 0 && newrow < n && newcol >= 0 && newcol < n && temp[newrow][newcol] != '*') {
+            temp[newrow][newcol] = '*';
+            
+            v.push_back(grid[newrow][newcol]);
+            dfs(newrow, newcol, v, count + 1);
+            
+            if (didWork) {
+                return;
+            }
+            
+            v.pop_back();
+            temp[newrow][newcol] = grid[newrow][newcol];
+        }
+    }
+}
+
+bool works(ll k) {
+    for (ll i = 0; i < n; i++) {
+        for (ll j = 0; j < n; j++) {
+            temp[i][j] = grid[i][j];
+        }
+    }
+    
+    goal = k;
+    
+    vector <char> t;
+    t.push_back(grid[0][0]);
+    
+    temp[0][0] = '*';
+    dfs(0, 0, t, 1);
+    
+    return didWork;
+}
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("hshoe.in");
+    ofstream fout ("hshoe.out");
+    
+    cin >> n;
+    
+    for (ll i = 0; i < n; i++) {
+        for (ll j = 0; j < n; j++) {
+            cin >> grid[i][j];
+        }
+    }
+    
+    ll ans;
+    for (ans = (n*n); ans > 1; ans--) {
+        if (works(ans)) {
+            cout << ans << endl;
+            return;
+        }
+    }
+    
+    cout << 0 << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);*/
+    
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
