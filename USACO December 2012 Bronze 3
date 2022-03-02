@@ -1,0 +1,265 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;*/
+const ll inf = 1e10;
+const ll ninf = -1 * 1e10;
+const ll MOD = 1e9 + 7;
+
+const ll len = 1200;
+
+ll n, cows;
+pair<ll, ll> coord[501];
+pair<pair<ll, ll>, pair<ll, ll>> fences[501];
+char grid[len][len];
+bool visited[len][len];
+
+ll dr[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+ll dc[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+
+ll ro[4] = {0, 1, 0, -1};
+ll co[4] = {1, 0, -1, 0};
+
+ll numCows = 0;
+void dfs(ll row, ll col) {
+    //cout << row << " " << col;
+    for (ll k = 0; k < 4; k++) {
+        ll newrow = row + ro[k];
+        ll newcol = col + co[k];
+        
+        if (newrow >= 0 && newrow < len && newcol >= 0 && newcol < len) {
+            if (visited[newrow][newcol]) {
+                continue;
+            }
+            
+            if (grid[newrow][newcol] == 'C') {
+                numCows++;
+                visited[newrow][newcol] = true;
+                dfs(newrow, newcol);
+            } else if (grid[newrow][newcol] == '*') {
+                visited[newrow][newcol] = true;
+                dfs(newrow, newcol);
+            }
+        }
+    
+    }
+}
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("crazy.in");
+    ofstream fout ("crazy.out");
+    
+    set <ll> xcoord;
+    set <ll> ycoord;
+
+    cin >> n >> cows;
+    for (ll i = 0; i < n; i++) {
+        cin >> fences[i].first.first >> fences[i].first.second >> fences[i].second.first >> fences[i].second.second;
+        
+        fences[i].first.first *= 2;
+        fences[i].first.second *= 2;
+        fences[i].second.first *= 2;
+        fences[i].second.second *= 2;
+        
+        for (ll k = 0; k < 4; k++) {
+            xcoord.insert(fences[i].first.first + ro[k]);
+            xcoord.insert(fences[i].second.first + ro[k]);
+            
+            ycoord.insert(fences[i].first.second + co[k]);
+            ycoord.insert(fences[i].second.second + co[k]);
+        }
+        /*xcoord.insert(fences[i].first.first * 2);
+        xcoord.insert(fences[i].second.first * 2);*/
+        
+        ycoord.insert(fences[i].first.second * 2);
+        ycoord.insert(fences[i].second.second * 2);
+    }
+    
+    for (ll i = 0; i < cows; i++) {
+        cin >> coord[i].first >> coord[i].second;
+        coord[i].first *= 2;
+        coord[i].second *= 2;
+        
+        for (ll k = 0; k < 4; k++) {
+            xcoord.insert(coord[i].first + ro[k]);
+            ycoord.insert(coord[i].second + co[k]);
+        }
+        xcoord.insert(coord[i].first * 2);
+        ycoord.insert(coord[i].second * 2);
+
+    }
+    
+    vector <ll> compressx;
+    vector <ll> compressy;
+    
+    for (auto el: xcoord) {
+        compressx.push_back(el);
+    }
+    
+    for (auto el: ycoord) {
+        compressy.push_back(el);
+    }
+    
+    sort(compressx.begin(), compressx.end());
+    sort(compressy.begin(), compressy.end());
+    
+    vector <ll> newx;
+    vector <ll> newy;
+    
+    newx.push_back(0);
+    newy.push_back(0);
+    
+    ll c = 0;
+    for (ll i = 1; i < compressx.size(); i++) {
+        if (compressx[i] == compressx[i - 1]) {
+            newx.push_back(c);
+        } else {
+            c++;
+            newx.push_back(c);
+        }
+    }
+    
+    c = 0;
+    for (ll i = 1; i < compressy.size(); i++) {
+        if (compressy[i] == compressy[i - 1]) {
+            newy.push_back(c);
+        } else {
+            c++;
+            newy.push_back(c);
+        }
+    }
+    
+    map <ll, ll> revx;
+    map <ll, ll> revy;
+    
+    for (ll i = 0; i < newx.size(); i++) {
+        revx[compressx[i]] = newx[i];
+    }
+    
+    for (ll i = 0; i < newy.size(); i++) {
+        revy[compressy[i]] = newy[i];
+    }
+    
+    for (ll i = 0; i <= len - 1; i++) {
+        for (ll j = 0; j <= len - 1; j++) {
+            grid[i][j] = '*';
+            visited[i][j] = false;
+        }
+    }
+    
+    for (ll i = 0; i < n; i++) {
+        //horizontal line
+        
+        //vertical line
+        
+        pair<ll, ll> point1;
+        pair<ll, ll> point2;
+        
+        point1.first = revx[fences[i].first.first];
+        point1.second = revy[fences[i].first.second];
+        point2.first = revx[fences[i].second.first];
+        point2.second = revy[fences[i].second.second];
+        
+        if (point1.first == point2.first) {
+            for (ll k = min(point1.second, point2.second); k <= max(point1.second, point2.second); k++) {
+                grid[point1.first][k] = 'L';
+            }
+        } else {
+            for (ll k = min(point1.first, point2.first); k <= max(point1.first, point2.first); k++) {
+                grid[k][point1.second] = 'L';
+            }
+        }
+    }
+    
+    for (ll i = 0; i < cows; i++) {
+        grid[revx[coord[i].first]][revy[coord[i].second]] = 'C';
+    }
+    
+    /*for (ll i = 0; i <= 20; i++) {
+        for (ll j = 0; j <= 20; j++) {
+            cout << grid[i][j];
+        }
+        cout << endl;
+    }*/
+    
+    ll ans = -1;
+    /*for (ll i = 0; i <= len - 1; i++) {
+        for (ll j = 0; j <= len - 1; j++) {
+            if (grid[i][j] == 'C' && !visited[i][j]) {
+                numCows = 1;
+                visited[i][j] = true;
+                
+                dfs(i, j);
+                
+                ans = max(ans, numCows);
+            }
+        }
+    }*/
+    
+    for (ll i = 0; i < cows; i++) {
+        if (!visited[revx[coord[i].first]][revy[coord[i].second]]) {
+            visited[revx[coord[i].first]][revy[coord[i].second]] = true;
+            numCows = 1;
+            dfs(revx[coord[i].first], revy[coord[i].second]);
+            
+            ans = max(ans, numCows);
+        }
+    }
+    
+    /*visited[10][10] = true;
+    dfs(10, 10);
+    */
+    cout << ans << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);*/
+    
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
