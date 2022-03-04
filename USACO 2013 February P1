@@ -1,0 +1,90 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+const ll MOD = 1e9 + 7;
+
+
+
+void solve()
+{
+    ifstream fin ("relay.in");
+    ofstream fout ("relay.out");
+    
+    //read in input
+    ll n;
+    cin >> n;
+    
+    ll f[n + 1];
+    for (ll i = 0; i < n; i++) {
+        cin >> f[i];
+        f[i]--;
+    }
+    
+    ll ans = 0;
+    
+    for (ll start = 0; start < n; start++) {
+        ll prev = start;
+        ll cur = f[start];
+        for (ll num = 1; num <= n; num++) {
+            if (cur == -1) {
+                ans++;
+                break;
+            }
+            
+            prev = cur;
+            cur = f[cur];
+        }
+    }
+    
+    cout << ans << endl;
+
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    */
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
