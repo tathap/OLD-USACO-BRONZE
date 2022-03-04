@@ -1,0 +1,174 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+const ll MOD = 1e9 + 7;
+
+ll n, m;
+ll a[10001], b[10001];
+char c[10001];
+
+
+vector <pair<ll, ll>> adj[1001]; //.first is the node, .second is the type of relationship, 1 if friends and -1 if enemies
+
+
+bool visited[1001];
+ll mark[1001]; //1 or - 1
+
+bool didWork = true;
+
+void init()
+{
+    for (ll i = 0; i < 1001; i++) {
+        visited[i] = false;
+        mark[i] = 0;
+        adj[i].clear();
+    }
+}
+
+void dfs(ll node, ll m) {
+    for (auto el: adj[node]) {
+        if (el.second == 1) {
+            if (visited[el.first] && mark[el.first] != m) {
+                didWork = false;
+                return;
+            }
+            
+            if (!visited[el.first]) {
+                visited[el.first] = true;
+                mark[el.first] = m;
+                dfs(el.first, mark[el.first]);
+                if (!didWork) {
+                    return;
+                }
+            }
+        } else {
+            if (visited[el.first] && mark[el.first] == m) {
+                didWork = false;
+                return;
+            }
+            
+            if (!visited[el.first]) {
+                visited[el.first] = true;
+                mark[el.first] = 1 - m;
+                dfs(el.first, mark[el.first]);
+                if (!didWork) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+bool works(ll k) {
+    init();
+    
+    for (ll i = 0; i < k; i++) {
+        
+        if (c[i] == 'L') {
+            adj[a[i]].push_back({b[i], -1});
+            adj[b[i]].push_back({a[i], -1});
+        } else {
+            adj[a[i]].push_back({b[i], 1});
+            adj[b[i]].push_back({a[i], 1});
+        }
+    }
+    
+    for (ll i = 0; i < n; i++) {
+        if (!visited[i]) {
+            visited[i] = true;
+            mark[i] = 1;
+            
+            dfs(i, 1);
+            
+            if (!didWork) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+    
+}
+
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("truth.in");
+    ofstream fout ("truth.out");
+    
+    cin >> n >> m;
+    
+    for (ll i = 0; i < m; i++) {
+        cin >> a[i] >> b[i] >> c[i];
+        a[i]--;
+        b[i]--;
+    }
+    
+    ll lo = 1;
+    ll hi = m;
+    
+    lo--;
+    
+    while (lo < hi) {
+        ll mid = lo + (hi - lo + 1) / 2;
+        didWork = true;
+        if (works(mid)) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    
+    cout << lo << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    */
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
