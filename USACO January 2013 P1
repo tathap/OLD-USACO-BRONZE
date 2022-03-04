@@ -1,0 +1,194 @@
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <vector>
+using namespace std;
+typedef long long ll;
+
+ll n, a, b;
+ll sizeOfGrid;
+
+vector <pair<pair<ll,ll>, char>> fences; //fences.first.first is the x-coordinate, fences.first.second is the y-coordinate, fences.second is the character that represents the fence
+
+set <ll> xset;
+set <ll> yset;
+
+vector <ll> xpoints;
+vector <ll> ypoints;
+
+map <ll, ll> coordComX;
+map <ll, ll> coordComY;
+
+ll dr[4] = {-1, 0, 1, 0};
+ll dc[4] = {0, 1, 0, -1};
+
+ll dir = 2; //0 is north, 1 is right, 2 is south, 3 is west
+char grid[203][203];
+
+bool isFound = false;
+
+#define cout fout
+#define cin fin
+
+void dfs(ll row, ll col, ll count) {
+    if (count > sizeOfGrid) {
+        return;
+    }
+    
+    if (isFound) {
+        return;
+    }
+    
+    if (row == a && col == b) {
+        isFound = true;
+        return;
+    }
+    
+    ll newrow = row + dr[dir];
+    ll newcol = col + dc[dir];
+    
+    if (newrow >= 0 && newrow < n + 3 && newcol >= 0 && newcol < n + 3) {
+        if (grid[newrow][newcol] == '/') {
+            if (dir == 1) {
+                dir = 0;
+            } else if (dir == 2) {
+                dir = 3;
+            } else if (dir == 3) {
+                dir = 2;
+            } else {
+                dir = 1;
+            }
+        } else if (grid[newrow][newcol] == '\\') {
+            if (dir == 1) {
+                dir = 2;
+            } else if (dir == 2) {
+                dir = 1;
+            } else if (dir == 3) {
+                dir = 0;
+            } else {
+                dir = 3;
+            }
+        }
+        
+        dfs(newrow, newcol, count + 1);
+    }
+}
+
+int main()
+{
+    
+    ifstream fin ("mirrors.in");
+    ofstream fout ("mirrors.out");
+    
+    cin >> n >> a >> b;
+    
+    sizeOfGrid = (n + 3) * (n + 3);
+    
+    xset.insert(a);
+    yset.insert(b);
+    
+    xset.insert(0);
+    yset.insert(0);
+    
+    for (ll i = 0; i < n; i++) {
+        ll x, y;
+        char c;
+        
+        cin >> x >> y >> c;
+        
+        fences.push_back({{x, y}, c});
+        
+        xset.insert(x);
+        yset.insert(y);
+    }
+    
+    for (auto el: xset) {
+        xpoints.push_back(el);
+    }
+    
+    for (auto el: yset) {
+        ypoints.push_back(el);
+    }
+    
+    sort(xpoints.begin(), xpoints.end());
+    sort(ypoints.begin(), ypoints.end());
+    
+    ll c = 2;
+    coordComX[xpoints[0]] = 1;
+    coordComY[ypoints[0]] = 1;
+    
+    for (ll i = 1; i < xpoints.size(); i++) {
+        if (xpoints[i] == xpoints[i - 1]) {
+            continue;
+        }
+        
+        coordComX[xpoints[i]] = c;
+        c++;
+    }
+    
+    c = 2;
+    
+    for (ll i = 1; i < ypoints.size(); i++) {
+        if (ypoints[i] == ypoints[i - 1]) {
+            continue;
+        }
+        
+        coordComY[ypoints[i]] = c;
+        c++;
+    }
+
+    a = coordComX[a];
+    b = coordComY[b];
+    
+    for (ll i = 0; i < n; i++) {
+        fences[i].first.first = coordComX[fences[i].first.first];
+        fences[i].first.second = coordComY[fences[i].first.second];
+    }
+    
+    grid[coordComX[0]][coordComY[0]] = 'H';
+    grid[a][b] = 'A';
+    
+    for (ll i = 0; i < n; i++) {
+        grid[fences[i].first.first][fences[i].first.second] = fences[i].second;
+        if (grid[fences[i].first.first][fences[i].first.second] == '/') {
+            grid[fences[i].first.first][fences[i].first.second] = '\\';
+        } else {
+            grid[fences[i].first.first][fences[i].first.second] = '/';
+        }
+    }
+    
+    dfs(coordComX[0], coordComY[0], 1);
+    
+    if (isFound) {
+        cout << 0 << endl;
+        return 0;
+    }
+        
+    for (ll i = 0; i < n; i++) {
+        if (grid[fences[i].first.first][fences[i].first.second] == '/') {
+            grid[fences[i].first.first][fences[i].first.second] = '\\';
+        } else {
+            grid[fences[i].first.first][fences[i].first.second] = '/';
+        }
+        
+        dir = 2;
+        dfs(coordComX[0], coordComY[0], 1);
+        
+        if (isFound) {
+            cout << i + 1 << endl;
+            return 0;
+        }
+        
+        if (grid[fences[i].first.first][fences[i].first.second] == '/') {
+            grid[fences[i].first.first][fences[i].first.second] = '\\';
+        } else {
+            grid[fences[i].first.first][fences[i].first.second] = '/';
+        }
+    }
+    
+    cout << -1 << endl;
+    return 0;
+    
+}
