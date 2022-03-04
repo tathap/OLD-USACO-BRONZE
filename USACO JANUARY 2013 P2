@@ -1,0 +1,114 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+const ll MOD = 1e9 + 7;
+
+
+void solve()
+{
+    //read in input
+    
+    ifstream fin ("paint.in");
+    ofstream fout ("paint.out");
+    
+    ll n;
+    cin >> n;
+    
+    pair <ll, ll> intervals[n + 1];
+    
+    ll start = 0;
+    
+    for (ll i = 0; i < n; i++) {
+        ll a;
+        char c;
+        cin >> a >> c;
+        
+        if (c == 'L') {
+            intervals[i] = {start - a, start};
+            start -= a;
+        } else {
+            intervals[i] = {start, start + a};
+            start += a;
+        }
+    }
+    
+    //sort(intervals, intervals + n);
+    
+    vector <pair<ll, ll>> points; //points.first is its location, .second is 0 if it is start and 1 if it is end
+    for (ll i = 0; i < n; i++) {
+        points.push_back({intervals[i].first, 0});
+        points.push_back({intervals[i].second, 1});
+    }
+    
+    sort(points.begin(), points.end());
+    /*for (auto el: points) {\
+        cout << el.first << " " << el.second << endl;
+    }*/
+    
+    ll count = 1;
+    ll ans = 0;
+    for (ll i = 1; i < points.size(); i++) {
+        if (count >= 2) {
+            //cout << points[i].first << " " << points[i - 1].first << " LOL " << endl;
+            ans += (points[i].first - points[i - 1].first);
+        }
+        
+        if (points[i].second == 0) {
+            count++;
+        } else {
+            count--;
+        }
+    }
+    
+    cout << ans << endl;
+    
+
+    return;
+}
+
+
+int main()
+{
+    //Fast IO
+    /*ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    */
+    ll t;
+    //cin >> t;
+    
+    t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
