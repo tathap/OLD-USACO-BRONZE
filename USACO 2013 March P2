@@ -1,0 +1,82 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+//const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+*/
+const ll MOD = 1e9 + 7;
+
+void solve()
+{
+    
+    ifstream fin ("proximity.in");
+    ofstream fout ("proximity.out");
+        //read in input
+    
+    
+    ll n, k;
+    cin >> n >> k;
+    
+    ll breed[n];
+    
+    for (ll i = 0; i < n; i++) {
+        cin >> breed[i];
+    }
+    
+    map <ll, ll> m; //key is a breed, val is the most recent index
+    
+    ll ans = -1;
+    for (ll i = 0; i < n; i++) {
+        if (m.find(breed[i]) == m.end()) {
+            m[breed[i]] = i;
+            continue;
+        } else {
+            if (i - m[breed[i]] <= k) {
+                ans = max(ans, breed[i]);
+            }
+            m[breed[i]] = i;
+        }
+    }
+
+    cout << ans << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    ll t = one;
+    
+    while (t--) {
+        solve();
+    }
+}
+
