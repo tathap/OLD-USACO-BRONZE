@@ -1,0 +1,134 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+//const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+*/
+const ll MOD = 1e9 + 7;
+
+ll convert(vector <ll> v) {
+    ll num = 0;
+    ll pow = 1;
+    for (ll i = 0; i < v.size(); i++) {
+        num += (pow * v[i]);
+        pow *= 2;
+    }
+    
+    return num;
+}
+
+void solve()
+{
+    
+    ifstream fin ("blink.in");
+    ofstream fout ("blink.out");
+    
+    ll n, b;
+    cin >> n >> b;
+    
+    bool used[70000];
+    ll location[70000];
+    map <ll, vector <ll>> rev;
+    
+    for (ll i = 0; i < 70000; i++) {
+        used[i] = false;
+        location[i] = -1;
+    }
+    
+    vector <ll> current;
+    for (ll i = 0; i < n; i++) {
+        ll x;
+        cin >> x;
+        
+        current.push_back(x);
+    }
+        
+    ll c = 0;
+    while (!used[convert(current)]) {
+        /*for (auto el: current) {
+            cout << el << " ";
+        }
+        cout << endl;
+        */
+        
+        used[convert(current)] = true;
+        location[convert(current)] = c;
+        rev[c] = current;
+        
+        vector <ll> temp;
+        for (ll k = 0; k < n; k++) {
+            if (k == 0) {
+                if (current[n - 1] == 1) {
+                    temp.push_back(1 - current[k]);
+                } else {
+                    temp.push_back(current[k]);
+                }
+            } else {
+                if (current[k - 1] == 1) {
+                    temp.push_back(1 - current[k]);
+                } else {
+                    temp.push_back(current[k]);
+                }
+            }
+        }
+        
+        current = temp;
+        c++;
+    }
+
+    //get length of cycle
+    ll len = c - location[convert(current)];
+    ll begin = location[convert(current)];
+    
+    //cout << len << " " << begin << endl;
+    
+    ll newloc = (b - begin) % len + begin;
+    //cout << newloc << " LOL " << endl;
+    //cout << convert2(newloc) << endl;
+    vector <ll> ans = rev[newloc];
+    for (auto el: ans) {
+        cout << el << endl;
+    }
+    
+    
+    
+    return;
+}
+
+
+int main()
+{
+    ll t = one;
+    
+    while (t--) {
+        solve();
+    }
+}
+
