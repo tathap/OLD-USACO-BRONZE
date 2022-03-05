@@ -1,0 +1,248 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+//const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+*/
+const ll MOD = 1e9 + 7;
+
+ll n;
+ll ymin, ymax;
+ll xmin, xmax;
+
+pair <ll, ll> feet[4]; //feet[0] is fl, feet[1] is fr, feet[2] is rl, feet[3] is rr
+
+ll dir = 0;
+ll dr[4] = {0, 1, 0, -1};
+ll dc[4] = {1, 0, -1, 0};
+
+bool isValid = true;
+
+bool check(ll row, ll col) {
+    for (ll k = 0; k < 4; k++) {
+        if (row == feet[k].first && col == feet[k].second) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void pivot(char a, char b) {
+    if (a == 'F' && b == 'L') {
+        for (ll k = 0; k < 4; k++) {
+            if (k != 0) {
+                ll temprow = feet[k].first - feet[0].first;
+                ll tempcol = feet[k].second - feet[0].second;
+                
+                ll newrow = tempcol;
+                ll newcol = temprow * -1;
+                
+                feet[k].first = newrow + feet[0].first;
+                feet[k].second = newcol + feet[0].second;
+            }
+        }
+    } else if (a == 'F' && b == 'R') {
+        for (ll k = 0; k < 4; k++) {
+            if (k != 1) {
+                ll temprow = feet[k].first - feet[1].first;
+                ll tempcol = feet[k].second - feet[1].second;
+                
+                ll newrow = tempcol;
+                ll newcol = temprow * -1;
+                
+                feet[k].first = newrow + feet[1].first;
+                feet[k].second = newcol + feet[1].second;
+            }
+        }
+    } else if (a == 'R' && b == 'L') {
+        for (ll k = 0; k < 4; k++) {
+            if (k != 2) {
+                ll temprow = feet[k].first - feet[2].first;
+                ll tempcol = feet[k].second - feet[2].second;
+                
+                ll newrow = tempcol;
+                ll newcol = temprow * -1;
+                
+                feet[k].first = newrow + feet[2].first;
+                feet[k].second = newcol + feet[2].second;
+            }
+        }
+    } else {
+        for (ll k = 0; k < 4; k++) {
+            if (k != 3) {
+                ll temprow = feet[k].first - feet[3].first;
+                ll tempcol = feet[k].second - feet[3].second;
+                
+                ll newrow = tempcol;
+                ll newcol = temprow * -1;
+                
+                feet[k].first = newrow + feet[3].first;
+                feet[k].second = newcol + feet[3].second;
+            }
+        }
+    }
+    
+    dir = (dir + 1) % 4;
+}
+void move(char a, char b, ll tdir) {
+    if (a == 'F' && b == 'L') {
+        ll newrow = feet[0].first + dr[tdir];
+        ll newcol = feet[0].second + dc[tdir];
+        
+        if (check(newrow, newcol)) {
+            isValid = false;
+            return;
+        } else {
+            feet[0].first = newrow;
+            feet[0].second = newcol;
+        }
+    } else if (a == 'F' && b == 'R') {
+        ll newrow = feet[1].first + dr[tdir];
+        ll newcol = feet[1].second + dc[tdir];
+        
+        if (check(newrow, newcol)) {
+            isValid = false;
+            return;
+        } else {
+            feet[1].first = newrow;
+            feet[1].second = newcol;
+        }
+    } else if (a == 'R' && b == 'L') {
+        ll newrow = feet[2].first + dr[tdir];
+        ll newcol = feet[2].second + dc[tdir];
+        
+        if (check(newrow, newcol)) {
+            isValid = false;
+            return;
+        } else {
+            feet[2].first = newrow;
+            feet[2].second = newcol;
+        }
+    } else {
+        ll newrow = feet[3].first + dr[tdir];
+        ll newcol = feet[3].second + dc[tdir];
+        
+        if (check(newrow, newcol)) {
+            isValid = false;
+            return;
+        } else {
+            feet[3].first = newrow;
+            feet[3].second = newcol;
+        }
+    }
+}
+
+void solve()
+{
+    
+    ifstream fin ("ballet.in");
+    ofstream fout ("ballet.out");
+
+    cin >> n;
+    
+    ymin = 1;
+    xmin = 1;
+    
+    xmax = 2;
+    ymax = 2;
+    
+    feet[0].first = 1;
+    feet[0].second = 2;
+    feet[1].first = 2;
+    feet[1].second = 2;
+    feet[2].first = 1;
+    feet[2].second = 1;
+    feet[3].first = 2;
+    feet[3].second = 1;
+
+    
+    for (ll i = 0; i < n; i++) {
+       /* for (ll k = 0; k < 4; k++) {
+            cout <<feet[k].first << " " << feet[k].second << endl;
+        }
+        cout << endl;
+        */
+        string s;
+        cin >> s;
+        
+        ll tdir;
+        if (s[2] == 'F') {
+            move(s[0], s[1], dir);
+        } else if (s[2] == 'B') {
+            tdir = (dir + 2) % 4;
+            move(s[0], s[1], tdir);
+        } else if (s[2] == 'L') {
+            if (dir == 0) {
+                tdir = 3;
+            } else {
+                tdir = dir - 1;
+            }
+            tdir = tdir % 4;
+            move(s[0], s[1], tdir);
+        } else if (s[2] == 'R') {
+            tdir = (dir + 1) % 4;
+            move(s[0], s[1], tdir);
+        } else {
+            pivot(s[0], s[1]);
+        }
+        
+        if (!isValid) {
+            cout << -1 << endl;
+            return;
+        }
+        
+        for (ll k = 0; k < 4; k++) {
+            xmin = min(xmin, feet[k].first);
+            xmax = max(xmax, feet[k].first);
+            
+            ymin = min(ymin, feet[k].second);
+            ymax = max(ymax, feet[k].second);
+        }
+        
+
+    }
+    cout << (ymax - ymin + 1) * (xmax - xmin + 1) << endl;
+    
+    
+    
+    return;
+}
+
+
+int main()
+{
+    ll t = one;
+    
+    while (t--) {
+        solve();
+    }
+}
+
