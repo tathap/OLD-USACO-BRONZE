@@ -1,0 +1,123 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+const ll MOD = 1e9 + 7;
+
+ll grid[102][102];
+bool visited[102][102];
+
+ll n;
+
+ll dr[4] = {0, 1, 0, -1};
+ll dc[4] = {1, 0, -1, 0};
+
+ll dfs(ll row, ll col, ll val) {
+    ll ret = 0;
+
+    for (ll k = 0; k < 4; k++) {
+        ll newrow = row + dr[k];
+        ll newcol = col + dc[k];
+        
+        if (newrow >= 0 && newrow < 102 && newcol >= 0 && newcol < 102) {
+            if (grid[newrow][newcol] == val && !visited[newrow][newcol]) {
+                visited[newrow][newcol] = true;
+                ret += dfs(newrow, newcol, val);
+            } else if (grid[newrow][newcol] == 1 - val) {
+                ret++;
+            }
+        }
+    }
+    
+    return ret;
+}
+
+ll pointa, pointb;
+
+void solve()
+{
+    ifstream fin ("perimeter.in");
+    ofstream fout ("perimeter.out");
+    
+    //read in input
+    cin >> n;
+    
+    for (ll i = 0; i < 102; i++) {
+        for (ll j = 0; j < 102; j++) {
+            grid[i][j] = 0;
+            visited[i][j] = false;
+        }
+    }
+    
+    for (ll i = 0; i < n; i++) {
+        ll x, y;
+        cin >> x >> y;
+        
+        grid[x][y] = 1;
+        
+        pointa = x;
+        pointb = y;
+    }
+    
+    visited[pointa][pointb] = true;
+    //ll p1 = dfs(pointa, pointb, 1);
+    
+    vector <ll> p2;
+    for (ll i = 0; i < 102; i++) {
+        for (ll j = 0; j < 102; j++) {
+            if (grid[i][j] == 0 && !visited[i][j]) {
+                visited[i][j] = true;
+                ll val = dfs(i, j, 0);
+                p2.push_back(val);
+            }
+        }
+    }
+        
+
+    ll ans = -1;
+    for (auto el: p2) {
+        ans = max(ans, el);
+    }
+    
+    cout << ans << endl;
+    return;
+}
+
+
+int main()
+{
+    ll t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
+
