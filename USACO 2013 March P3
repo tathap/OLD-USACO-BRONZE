@@ -1,0 +1,105 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+//const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+*/
+const ll MOD = 1e9 + 7;
+
+ll n, k;
+char c[51];
+ll a[51];
+ll b[51];
+
+ll board[16]; //1, 2, and 3
+
+ll ans = 0;
+
+bool works()
+{
+    for (ll i = 0; i < k; i++) {
+        if (c[i] == 'S' && board[a[i]] != board[b[i]]) {
+            return false;
+        }
+        
+        if (c[i] == 'D' && board[a[i]] == board[b[i]]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+void recurse(ll pos) {
+    if (pos == n) {
+        if (works()) {
+            ans++;
+        }
+        return;
+    }
+    
+    for (ll i = 1; i <= 3; i++) {
+        board[pos] = i;
+        recurse(pos + 1);
+        board[pos] = -1;
+    }
+}
+
+void solve()
+{
+    
+    ifstream fin ("assign.in");
+    ofstream fout ("assign.out");
+        
+    cin >> n >> k;
+    
+    for (ll i = 0; i < k; i++) {
+        cin >> c[i] >> a[i] >> b[i];
+        a[i]--;
+        b[i]--;
+    }
+    
+    recurse(0);
+    
+    cout << ans << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    ll t = one;
+    
+    while (t--) {
+        solve();
+    }
+}
+
