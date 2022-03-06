@@ -1,0 +1,37 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int n;
+
+bool check(int x, int y){
+    if(abs(x - y) <= 2) return true;
+    if(abs(x - y) > (n - 3)) return true;
+    return false;
+}
+
+int main()
+{
+    ifstream fin("combo.in");
+    ofstream fout("combo.out");
+    
+    fin >> n;
+    int j1, j2, j3;
+    int m1, m2, m3;
+    fin >> j1 >> j2 >> j3;
+    fin >> m1 >> m2 >> m3;
+    
+    int total = 0;
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= n; j++){
+            for(int k = 1; k <= n; k++){
+                if((check(i, j1)) && (check(j, j2)) && (check(k, j3))){
+                    total++;
+                }else if((check(i, m1)) && (check(j, m2)) && (check(k, m3))){
+                    total++;
+                }
+            }
+        }
+    }
+    fout << total << endl;
+}
