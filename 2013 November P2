@@ -1,0 +1,117 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+typedef long long ll;
+
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+bool comp(pair<ll, ll> e, pair<ll, ll> f) {
+    if (e.first == f.first) {
+        return e.second > f.second;
+    }
+    return e.first < f.first;
+}
+
+void solve()
+{
+    
+    ifstream fin ("milktemp.in");
+    ofstream fout ("milktemp.out");
+    
+    
+    ll n, x, y, z;
+    cin >> n >> x >> y >> z;
+    
+    vector <pair<ll, ll>> points;
+
+    map <ll, ll> cur;
+    map <ll, ll> prev;
+    set <ll> unique;
+    
+    for (ll i = 0; i < n; i++) {
+        ll a, b;
+        cin >> a >> b;
+
+        points.push_back({a, 1});
+        points.push_back({b, 0});
+     
+        unique.insert(a);
+        unique.insert(b);
+    }
+        
+    sort(points.begin(), points.end(), comp);
+    
+    ll ps = 0;
+    ll ps2 = 0;
+    
+    ll subtract = 0;
+    
+    for (ll i = 0; i < points.size() - 1; i++) {
+        if (points[i].second) {
+            ps++;
+            
+            if (points[i + 1].first != points[i].first) {
+                cur[points[i].first] = ps;
+                prev[points[i].first] = ps2;
+            }
+        } else {
+            if (points[i + 1].first != points[i].first) {
+                cur[points[i].first] = ps;
+                prev[points[i].first] = ps2;
+                ps -= (subtract + 1);
+                ps2 += (subtract + 1);
+                
+                subtract = 0;
+            } else {
+                subtract++;
+            }
+        }
+        
+    }
+    
+    cur[points[points.size() - 1].first] = ps;
+    prev[points[points.size() - 1].first] = ps2;
+
+    ll ans = -1;
+    
+    for (auto el: unique) {
+        ll after = n - prev[el] - cur[el];
+        ll temp = (z * prev[el]) + (y * cur[el]) + (x * after);
+        
+        ans = max(ans, temp);
+    }
+
+
+    cout << ans << endl;
+
+
+    return;
+}
+
+
+int main()
+{
+    ll t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
