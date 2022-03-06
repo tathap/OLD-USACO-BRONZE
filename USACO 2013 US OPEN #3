@@ -1,0 +1,101 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+//const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+*/
+const ll MOD = 1e9 + 7;
+
+
+void solve()
+{
+    
+    ifstream fin ("photo.in");
+    ofstream fout ("photo.out");
+    
+    ll n, k;
+    cin >> n >> k;
+    
+    map <ll, vector <ll>> rev; //rev[i] is a list of enemies of i
+    vector <ll> points;
+    
+    for (ll i = 0; i < k; i++) {
+        ll a, b;
+        cin >> a >> b;
+        
+        rev[a].push_back(b);
+        rev[b].push_back(a);
+        
+        points.push_back(a);
+        points.push_back(b);
+    }
+    
+    sort(points.begin(), points.end());
+    
+    set <ll> used;
+    used.insert(points[0]);
+    
+    ll ans = 1;
+    
+    for (ll i = 1; i < points.size(); i++) {
+        bool isFound = false;
+        
+        for (auto el: rev[points[i]]) {
+            if (used.find(el) == used.end()) {
+                //
+            } else {
+                ans++;
+                used.clear();
+                used.insert(points[i]);
+                isFound = true;
+            }
+        }
+        
+        if (isFound) {
+            continue;
+        }
+        
+        used.insert(points[i]);
+    }
+    
+    cout << ans << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    ll t = one;
+    
+    while (t--) {
+        solve();
+    }
+}
+
