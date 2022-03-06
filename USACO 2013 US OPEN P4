@@ -1,0 +1,155 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+//change the long long to int if you need to save memory/time really badly
+typedef long long ll;
+
+//Comment this define when working on interactive problems
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+
+//const ll MAXN = 1e6 + 1;
+const ll zer = 0;
+const ll one = 1;
+/*const ll inf = LLONG_MAX;
+const ll ninf = LLONG_MIN;
+*/
+const ll MOD = 1e9 + 7;
+
+ll n;
+ll a[13], b[13], c[13];
+bool used[13];
+ll mark[13];
+ll rev[13];
+
+ll ans = LLONG_MAX;
+
+ll cur = 0;
+void recurse(ll pos, ll pending, ll excost) {
+    if (pos == n) {
+        if (cur < ans) {
+            ans = cur;
+            /*for (ll i = 0; i < n; i++) {
+                cout << mark[i] << " ";
+            }
+            cout << endl;*/
+        }
+        
+        return;
+    }
+    
+    for (ll k = 0; k < n; k++) {
+        if (!used[k]) {
+            used[k] = true;
+            mark[pos] = k;
+            rev[k] = pos;
+            
+            //update cost
+            
+            ll temp = 0;
+            ll tpending = pending, tcost = excost;
+            
+            if (rev[a[k]] != -1) {
+                temp += abs(pos - rev[a[k]]);
+                tpending--;
+                tcost -= abs(pos - rev[a[k]]);
+            } else {
+                tpending++;
+            }
+            
+            if (rev[b[k]] != -1) {
+                temp += abs(pos - rev[b[k]]);
+                tpending--;
+                tcost -= abs(pos - rev[b[k]]);
+            } else {
+                tpending++;
+            }
+            
+            if (rev[c[k]] != -1) {
+                temp += abs(pos - rev[c[k]]);
+                tpending--;
+                tcost -= abs(pos - rev[c[k]]);
+            } else {
+                tpending++;
+            }
+            
+            tcost += tpending;
+            
+            cur += temp;
+            
+            if (cur + tcost > ans) {
+                //cout << cur << " LOL " << endl;
+                /*for (ll i = 0; i <= pos; i++) {
+                    cout << mark[i] << " ";
+                }
+                cout << "LOL" << endl;
+                */
+                cur -= temp;
+                used[k] = false;
+                mark[pos] = -1;
+                rev[k] = -1;
+                continue;
+            }
+            
+            recurse(pos + 1, tpending, tcost);
+            
+            cur -= temp;
+            rev[k] = -1;
+            mark[pos] = -1;
+            used[k] = false;
+        }
+    }
+}
+
+void solve()
+{
+    
+    ifstream fin ("haywire.in");
+    ofstream fout ("haywire.out");
+    
+    cin >> n;
+    for (ll i = 0; i < n; i++) {
+        used[i] = false;
+        mark[i] = -1;
+        rev[i] = -1;
+        
+        cin >> a[i] >> b[i] >> c[i];
+        a[i]--;
+        b[i]--;
+        c[i]--;
+    }
+    
+    recurse(0, 0, 0);
+    
+    cout << ans << endl;
+    
+    return;
+}
+
+
+int main()
+{
+    ll t = one;
+    
+    while (t--) {
+        solve();
+    }
+}
+
