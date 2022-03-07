@@ -1,0 +1,189 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <math.h>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <numeric>
+#include <climits>
+#include <fstream>
+using namespace std;
+
+typedef long long ll;
+
+#define endl "\n"
+
+
+#define cout fout
+#define cin fin
+
+
+ll n, k;
+set <string> allAdj[32];
+vector <string> sorted[32];
+
+vector <string> original[101];
+
+//This has been 0-indexed
+
+//true if a is lexographically smaller than b, false otherwise
+bool compare(vector <ll> a, vector <ll> b) {
+    for (ll i = 0; i < a.size(); i++) {
+        if (a[i] < b[i]) {
+            return true;
+        } else if (a[i] > b[i]) {
+            return false;
+        }
+    }
+    
+    return false;
+}
+
+void solve()
+{
+    
+    ifstream fin ("nocow.in");
+    ofstream fout ("nocow.out");
+    
+    cin >> n >> k;
+    k--;
+    
+    ll len = 0;
+    
+    for (ll i = 0; i < n; i++) {
+        string farmer, john, has, no, adj;
+        cin >> farmer >> john >> has >> no >> adj;
+        
+        ll c = 0;
+        
+        while (adj != "cow.") {
+            allAdj[c].insert(adj);
+            original[i].push_back(adj);
+            
+            cin >> adj;
+            
+            c++;
+        }
+        
+        len = c;
+    }
+    
+    for (ll i = 0; i < len; i++) {
+        for (auto el: allAdj[i]) {
+            sorted[i].push_back(el);
+        }
+    }
+
+    ll ps[len + 1]; //ps[i] is the number of cows starting with the i + 1 th columnb (This was explained really badl)
+    
+    ps[len - 1] = 1;
+    for (ll i = len - 2; i >= 0; i--) {
+        ps[i] = allAdj[i + 1].size() * ps[i + 1];
+    }
+    
+    ll base = 0;
+    ll row = 0;
+    vector <ll> cur;
+    
+    while (row != len) {
+        bool isDone = false;
+        
+        for (ll i = 0; i < allAdj[row].size(); i++) {
+            if (base > k) {
+                cur.push_back(i - 1);
+                base -= ps[row];
+                row++;
+                isDone = true;
+                break;
+            }
+            
+            base += ps[row];
+        }
+        
+        if (isDone) {
+            continue;
+        }
+        
+        if (base > k) {
+            cur.push_back(allAdj[row].size() - 1);
+            base -= ps[row];
+            row++;
+        }
+    }
+    
+    ll extra = 0;
+    
+    
+    for (ll a = 0; a < n; a++) {
+        vector <ll> temp;
+        
+        for (ll i = 0; i < original[a].size(); i++) {
+            ll index = lower_bound(sorted[i].begin(), sorted[i].end(), original[a][i]) - sorted[i].begin();
+            temp.push_back(index);
+        }
+        
+        if (compare(temp, cur)) {
+            extra++;
+        } else if (temp == cur) {
+            extra++;
+        }
+    }
+    
+    while (extra > 0) {
+        cur[len - 1]++;
+        
+        ll pos = len - 1;
+        while (cur[pos] == allAdj[pos].size()) {
+            cur[pos] = 0;
+            pos--;
+            
+            cur[pos]++;
+        }
+        
+        for (ll i = 0; i < n; i++) {
+            bool isSame = true;
+            for (ll j = 0; j < original[i].size(); j++) {
+                ll index = lower_bound(sorted[j].begin(), sorted[j].end(), original[i][j]) - sorted[j].begin();
+                
+                if (index != cur[j]) {
+                    isSame = false;
+                    break;
+                }
+            }
+            
+            if (isSame) {
+                extra++;
+                break;
+            }
+        }
+        
+        extra--;
+    }
+    
+    ll pos;
+    for (pos = 0; pos < cur.size(); pos++) {
+        if (pos == cur.size() - 1) {
+            break;
+        }
+        cout << sorted[pos][cur[pos]] << " ";
+    }
+    
+    cout << sorted[pos][cur[pos]];
+    cout << endl;
+
+    return;
+}
+
+
+int main()
+{
+    ll t = 1;
+    
+    while (t--) {
+        solve();
+    }
+}
